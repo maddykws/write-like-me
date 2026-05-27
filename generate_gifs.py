@@ -79,9 +79,8 @@ def draw_grid(d):
             d.ellipse([x-1, y-1, x+1, y+1], fill=PANEL)
 
 def draw_header(d, day, accent=ACCENT):
-    # day badge top-left
-    d.rounded_rectangle([30, 30, 145, 60], radius=15, fill=accent)
-    d.text((45, 38), f"DAY {day:02d} / 30", font=f_day, fill=BG)
+    # accent bar top-left
+    d.rounded_rectangle([30, 38, 90, 50], radius=6, fill=accent)
     # name top-right
     bbox = d.textbbox((0, 0), "Shravan N", font=f_meta)
     tw = bbox[2] - bbox[0]
