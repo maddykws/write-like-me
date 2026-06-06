@@ -1,0 +1,14 @@
+Half precision is one of the highest-leverage two-line changes in machine learning.
+
+Mixed precision (FP16/BF16) lets the GPU do more math per second and hold bigger batches, often with no measurable drop in model quality.
+
+What you actually get:
+- Roughly 2x throughput on modern GPUs
+- Larger batch sizes in the same memory
+- Faster training and cheaper inference
+
+The catch is small: watch for numerical stability, and let the framework's autocast handle the casting for you.
+
+Free speed is rare. This is about as close as it gets.
+
+#GPU #DeepLearning #MachineLearning #MixedPrecision #MLOps

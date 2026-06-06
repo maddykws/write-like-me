@@ -1,0 +1,20 @@
+# Post 46 — Day 46
+
+**Topic:** AI  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_46.gif`
+
+---
+
+AI didn't make my engineers obsolete. It moved the bottleneck from writing code to deciding what's worth building.
+
+When generating a solution is cheap, the expensive part becomes taste: choosing the right problem, the right scope, the right tradeoffs.
+
+How I'm shifting the team's focus:
+- Less time on implementation, more on problem definition
+- More design review, because mistakes scale faster now
+- Rewarding 'we decided not to build this' as a real outcome
+
+The team that wins isn't the one that codes fastest. It's the one that aims best. Direction beats speed.
+
+#EngineeringManagement #AI #Leadership #TechLeadership #FutureOfWork

@@ -1,0 +1,12 @@
+My team standardized on one Python toolchain and got back a day a week. The tools mattered less than the decision to stop arguing about them.
+
+Formatter, linter, type checker, test runner, every project the same. Boring on purpose.
+
+What standardizing bought us:
+- No more 'works on my machine' style debates
+- New repos start productive on day one
+- Code review is about logic, not whitespace
+
+As a manager, removing a hundred tiny decisions frees the team for the few that actually matter. Consistency is a feature.
+
+#EngineeringManagement #Python #Leadership #DeveloperExperience #TechLeadership

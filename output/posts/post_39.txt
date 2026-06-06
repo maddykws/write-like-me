@@ -1,0 +1,12 @@
+When a model in production makes a bad call, my first question to the team is never 'who prompted it wrong?' It's 'why could it fail silently?'
+
+Blameless is easy to say and hard to do, especially with AI, where it's tempting to blame the model or the person who configured it.
+
+What I steer toward instead:
+- What guardrail was missing that let this reach a user?
+- What signal would have caught it sooner?
+- What do we change in the system, not the person?
+
+AI failures are systems problems. Treating them as individual mistakes just teaches people to hide them.
+
+#EngineeringManagement #AI #Leadership #BlamelessCulture #TechLeadership

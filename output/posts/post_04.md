@@ -1,0 +1,22 @@
+# Post 04 — Day 4
+
+**Topic:** Python  
+**GIF style:** Terminal output  
+**Attach:** `post_04.gif`
+
+---
+
+Python type hints don't slow you down. Skipping them does, three months later.
+
+I used to think types were ceremony for a dynamic language. Then I came back to my own code and couldn't remember what a function actually returned.
+
+What type hints + mypy buy you:
+- Bugs caught before runtime, not in production
+- IDE autocomplete that actually works
+- Documentation that can't go stale
+
+They're not about pleasing the compiler. There isn't one. They're about being kind to future-you.
+
+Add `mypy --strict` to CI and watch your refactors stop being scary.
+
+#Python #TypeHints #mypy #CleanCode #SoftwareEngineering

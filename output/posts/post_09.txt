@@ -1,0 +1,15 @@
+Your LLM bill is mostly tokens you didn't need to send.
+
+I audited a production prompt that ran 2M times a month. Half of it was boilerplate the model never used.
+
+Where the waste hides:
+- Re-sending static instructions on every call
+- Dumping whole documents when 3 paragraphs would do
+- Verbose few-shot examples that could be trimmed in half
+- Asking for explanations you immediately throw away
+
+We cut input tokens 60% and quality didn't move. The bill did.
+
+Token optimization is just respecting the model's attention and your budget.
+
+#AI #TokenOptimization #LLM #GenAI #CostOptimization

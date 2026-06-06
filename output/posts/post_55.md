@@ -1,0 +1,20 @@
+# Post 55 — Day 55
+
+**Topic:** Token Optimization  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_55.gif`
+
+---
+
+Token optimization taught my team a lesson that goes way beyond AI: constraints make better engineers.
+
+When we set a token budget per feature, the work got more creative, not less. People found smarter prompts, better caching, leaner context, because they had to.
+
+What the constraint produced:
+- Sharper thinking about what information actually matters
+- Reuse and caching that helped latency too
+- Pride in elegant solutions, not just working ones
+
+As a manager, I've stopped seeing budgets as limits on the team. A well-set constraint is a creativity engine.
+
+#EngineeringManagement #TokenOptimization #AI #Leadership #EngineeringCulture

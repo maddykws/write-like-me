@@ -1,0 +1,12 @@
+The most valuable engineer on an AI team is often the one who's skeptical of AI.
+
+As a manager, I used to worry the skeptics would slow us down. Now I seek them out.
+
+They're the ones who:
+- Ask whether we even need a model for this (sometimes a rule works)
+- Catch the demo that won't survive real users
+- Insist on measuring before we believe
+
+Enthusiasm ships the prototype. Skepticism ships the product. A healthy team needs both, in tension.
+
+#EngineeringManagement #AI #Leadership #TeamBuilding #TechLeadership

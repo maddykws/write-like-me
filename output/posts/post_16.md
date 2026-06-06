@@ -1,0 +1,20 @@
+# Post 16 — Day 16
+
+**Topic:** AI Project Management  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_16.gif`
+
+---
+
+As an engineering manager, the hardest part of shipping AI isn't the model. It's resetting how the team defines "done."
+
+Traditional features are done when the tests pass. AI features are never quite done, they're tuned. That breaks a lot of planning instincts.
+
+What I changed on my team:
+- We estimate AI work in experiments, not story points
+- "Done" means hitting an eval threshold, not closing a ticket
+- We budget time for iteration after launch, not just before
+
+Manage AI features like research with a deadline, not construction with a blueprint.
+
+#EngineeringManagement #AIProjectManagement #AI #Leadership #TechLeadership

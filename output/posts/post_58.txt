@@ -1,0 +1,12 @@
+After managing AI projects for a while, my one-line definition of success has changed. It's not 'the model is accurate.' It's 'the team can improve it safely, forever.'
+
+Accuracy is a snapshot. Maintainability is the movie. The features that last are the ones a new engineer can change next year without fear.
+
+What I optimize the system for:
+- Evals that catch regressions before users do
+- Prompts and configs that live in version control
+- Documentation of why, not just what
+
+Build AI features that your future team can confidently change. That's the difference between an asset and a liability.
+
+#EngineeringManagement #AIProjectManagement #AI #Leadership #TechLeadership

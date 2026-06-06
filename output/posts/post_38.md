@@ -1,0 +1,20 @@
+# Post 38 — Day 38
+
+**Topic:** AI Project Management  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_38.gif`
+
+---
+
+The best AI roadmap I've run had fewer features on it than the one before. That was the point.
+
+AI work has a long tail: the feature is 'working' at 70%, and the last 30% (edge cases, safety, reliability) takes as long as the first 70.
+
+So I plan differently now:
+- Fewer AI bets, each fully finished
+- Explicit time for the unglamorous last mile
+- The courage to say no to the demo that isn't production-ready
+
+Three shipped, trustworthy AI features beat ten impressive prototypes that erode user trust. Depth over breadth.
+
+#EngineeringManagement #AIProjectManagement #AI #Leadership #Roadmap

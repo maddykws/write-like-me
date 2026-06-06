@@ -1,0 +1,12 @@
+My most useful skill as an engineering manager in the AI era isn't technical. It's protecting the team from hype-driven roadmaps.
+
+Every week brings a new model, a new framework, a new 'this changes everything.' Half of it is real. Half is noise. Telling them apart is the job.
+
+How I filter:
+- Does this solve a problem we actually have?
+- What does it cost in tokens, latency, and complexity?
+- Can we measure if it's better, or are we just chasing shiny?
+
+Adopting everything is the same as adopting nothing. Pick deliberately.
+
+#EngineeringManagement #AI #Leadership #TechLeadership #DecisionMaking

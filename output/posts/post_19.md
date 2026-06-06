@@ -1,0 +1,20 @@
+# Post 19 — Day 19
+
+**Topic:** AI Project Management  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_19.gif`
+
+---
+
+The fastest way to derail an AI project is to promise a demo date before you have an eval.
+
+I've watched it happen. The demo looks magical. Then real users arrive, and the team has no way to tell if changes make things better or worse.
+
+As a manager, I now insist on this order:
+- Evals before demos
+- A quality baseline before a launch date
+- A way to measure regressions before we add features
+
+A demo proves it can work once. An eval proves it works repeatedly. Stakeholders need the second one.
+
+#EngineeringManagement #AIProjectManagement #AI #Leadership #Evals

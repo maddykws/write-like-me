@@ -1,0 +1,20 @@
+# Post 34 — Day 34
+
+**Topic:** AI Project Management  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_34.gif`
+
+---
+
+The riskiest moment in an AI project isn't the launch. It's the silence after, when everyone assumes it's still working.
+
+Models drift. Inputs change. The thing that scored 0.93 at launch can quietly slide without a single code change.
+
+What I require before we call an AI feature 'done':
+- Production monitoring on quality, not just uptime
+- Alerts when key metrics drift past a threshold
+- A scheduled re-eval, not a one-time check
+
+Shipping an AI feature isn't crossing a finish line. It's adopting something that needs ongoing care.
+
+#EngineeringManagement #AIProjectManagement #AI #MLOps #Leadership

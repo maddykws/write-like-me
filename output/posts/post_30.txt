@@ -1,0 +1,11 @@
+Halfway through 60 days of posting about engineering leadership, here's the throughline I keep coming back to: AI changes the tools, not the fundamentals.
+
+The teams winning with AI aren't the ones with the fanciest models. They're the ones who kept doing the boring things well:
+- Measuring before believing
+- Making cost and quality visible
+- Designing for failure, not just the happy path
+- Protecting focus from the hype cycle
+
+New technology, same disciplines. The managers who internalize that will outlast every model release.
+
+#EngineeringManagement #AIProjectManagement #AI #Leadership #TechLeadership

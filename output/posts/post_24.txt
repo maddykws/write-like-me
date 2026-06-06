@@ -1,0 +1,12 @@
+My team's AI velocity doubled when we stopped treating prompts like config and started treating them like code.
+
+Prompts were living in random strings, edited in production, with no history of what changed or why. Sound familiar?
+
+What we put in place:
+- Prompts in version control, reviewed like any other change
+- Every prompt change runs through evals in CI
+- A changelog so we know which version is live and why
+
+If a prompt can change your product's behavior, it deserves the same rigor as the code around it.
+
+#EngineeringManagement #AIProjectManagement #AI #LLM #TechLeadership

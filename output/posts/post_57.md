@@ -1,0 +1,20 @@
+# Post 57 — Day 57
+
+**Topic:** AI  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_57.gif`
+
+---
+
+The engineers thriving most in the AI era on my team share one trait, and it isn't raw coding speed. It's curiosity about how the tools actually work.
+
+Anyone can prompt a model. The people who pull ahead understand why it behaves the way it does, so they can debug it when it surprises them.
+
+What I try to cultivate:
+- Time to read the docs and papers, not just the API
+- Permission to experiment without a ticket attached
+- A team norm of sharing what we learn, including the failures
+
+In a field this new, the willingness to keep learning beats any current skill. Hire and grow for curiosity.
+
+#EngineeringManagement #AI #Leadership #TeamBuilding #LearningCulture

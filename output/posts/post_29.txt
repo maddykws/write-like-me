@@ -1,0 +1,12 @@
+A demo that wows leadership and a feature that survives production are two completely different artifacts. Confusing them is a management failure, not an engineering one.
+
+The demo runs on three hand-picked inputs. Production runs on the inputs you never imagined.
+
+How I keep the gap honest:
+- I never let a happy-path demo set the launch timeline
+- I ask to see the failure cases, not just the highlight reel
+- I budget the unglamorous 80%: edge cases, guardrails, monitoring
+
+Anyone can demo AI. Shipping it is the job. Protect the time the second one needs.
+
+#EngineeringManagement #AI #Leadership #ProductEngineering #TechLeadership

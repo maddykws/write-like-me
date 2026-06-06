@@ -1,0 +1,21 @@
+# Post 13 — Day 13
+
+**Topic:** AI Project Management  
+**GIF style:** Terminal output  
+**Attach:** `post_13.gif`
+
+---
+
+The teams shipping reliable AI features have one habit the others skip: they wrote the evals before the feature.
+
+Without evals, "is the AI good now?" becomes a vibe check in a meeting. With them, it's a number you can move.
+
+Eval-driven development in practice:
+- Define what 'correct' means as test cases, first
+- Run every prompt and model change against them
+- Track quality like you track latency: as a metric, over time
+- Never ship on a hunch you can't reproduce
+
+You can't manage what you can't measure. With LLMs, that's doubly true.
+
+#AI #AIProjectManagement #LLM #Evals #MachineLearning

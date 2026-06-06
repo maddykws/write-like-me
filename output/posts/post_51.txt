@@ -1,0 +1,12 @@
+The most valuable artifact my AI team produces isn't the model. It's the eval set. And I manage it like the asset it is.
+
+Models come and go. Providers change. But a well-curated set of test cases that captures what 'good' means? That compounds in value every quarter.
+
+How we treat it as a first-class asset:
+- It's versioned, reviewed, and owned, like production code
+- We add the hard cases we find in production back into it
+- It's the first thing we run when any dependency changes
+
+Your evals outlive your models. Invest in them accordingly. That's where institutional knowledge actually lives.
+
+#EngineeringManagement #AIProjectManagement #AI #Evals #Leadership

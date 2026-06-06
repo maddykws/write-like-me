@@ -1,0 +1,14 @@
+Most Java latency problems aren't in your code. They're in the JVM you never tuned.
+
+A service I inherited spiked to 400ms p99 every few minutes. The code was fine. The garbage collector wasn't.
+
+What actually moved the needle:
+- Switched to G1GC and set a pause target instead of guessing heap sizes
+- Right-sized the heap to the container, not the host
+- Watched allocation rate, not just heap usage
+
+p99 dropped to 90ms. Zero code changes.
+
+Before you rewrite the service, read the GC logs. The JVM is usually telling you exactly what's wrong.
+
+#Java #JVM #Performance #BackendEngineering #SoftwareEngineering

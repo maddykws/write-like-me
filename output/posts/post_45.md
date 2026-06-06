@@ -1,0 +1,20 @@
+# Post 45 — Day 45
+
+**Topic:** AI Project Management  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_45.gif`
+
+---
+
+I've started running 'pre-mortems' before every major AI feature. We imagine it failed badly, then work backwards. It's the highest-ROI hour we spend.
+
+Instead of asking 'how will this succeed?', we ask 'it's six months later and this blew up, what happened?'
+
+What it surfaces that normal planning misses:
+- The edge case everyone assumed someone else owned
+- The silent failure mode with no alerting
+- The trust we'd lose if the model embarrassed a user
+
+Optimism plans the launch. Pessimism, scheduled deliberately, prevents the disaster. AI needs both.
+
+#EngineeringManagement #AIProjectManagement #AI #Leadership #RiskManagement
