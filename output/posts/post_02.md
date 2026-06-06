@@ -1,0 +1,21 @@
+# Post 02 — Day 2
+
+**Topic:** Java  
+**GIF style:** Terminal output  
+**Attach:** `post_02.gif`
+
+---
+
+Java virtual threads quietly killed one of the oldest excuses in backend engineering.
+
+"We can't handle that many concurrent requests, threads are too expensive."
+
+With Project Loom, a thread is no longer a heavyweight OS resource. You can spin up hundreds of thousands of them and write plain, blocking, readable code.
+
+No reactive spaghetti. No callback hell. Just code that reads top to bottom.
+
+The mental model shift: stop pooling threads like they're scarce. They aren't anymore.
+
+If you wrote off Java as legacy, it's worth a second look.
+
+#Java #Concurrency #ProjectLoom #VirtualThreads #SoftwareEngineering

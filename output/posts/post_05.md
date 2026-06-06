@@ -1,0 +1,20 @@
+# Post 05 — Day 5
+
+**Topic:** Python  
+**GIF style:** Terminal output  
+**Attach:** `post_05.gif`
+
+---
+
+The most common Python async bug isn't a race condition. It's accidentally writing synchronous code that looks async.
+
+You sprinkle `async` and `await` everywhere, then call a blocking library inside the event loop and wonder why concurrency disappeared.
+
+Three rules that fix 90% of asyncio pain:
+- One blocking call freezes the entire loop. Push it to a thread.
+- `asyncio.gather` for things that should run together
+- Never `time.sleep` in async code. It's `await asyncio.sleep`.
+
+async isn't magic parallelism. It's cooperative. One greedy task starves the rest.
+
+#Python #asyncio #Concurrency #BackendEngineering #SoftwareEngineering

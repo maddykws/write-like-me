@@ -1,0 +1,12 @@
+The cheapest token is the one you never send. I repeat this to my team until it's a reflex.
+
+Before we optimize models, quantize, or chase a cheaper provider, we ask the boring question: do we need this call at all?
+
+Where we find free wins:
+- Cache responses for repeated identical requests
+- Short-circuit with a rule before invoking the model
+- Batch and dedupe instead of one call per item
+
+The most elegant optimization isn't a faster call. It's no call. As a manager, I reward the engineer who deletes the request entirely.
+
+#EngineeringManagement #TokenOptimization #AI #Leadership #CostOptimization

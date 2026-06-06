@@ -1,0 +1,20 @@
+# Post 52 — Day 52
+
+**Topic:** GPU  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_52.gif`
+
+---
+
+"It's slow, let's scale up" is a reflex. "It's slow, let's profile" is a discipline. As a manager, I'm paid to install the discipline.
+
+Scaling hardware to fix a software bottleneck is the most seductive mistake in ML infrastructure. It works just well enough to hide the real problem.
+
+What I ask before we add capacity:
+- Where is the time actually going? (show me the profile)
+- Is the GPU the bottleneck, or the thing feeding it?
+- What's the cheapest experiment that could disprove our theory?
+
+Capacity buys time. Profiling buys understanding. Only one of them compounds.
+
+#EngineeringManagement #GPU #MLOps #Leadership #Performance

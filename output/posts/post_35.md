@@ -1,0 +1,20 @@
+# Post 35 — Day 35
+
+**Topic:** AI  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_35.gif`
+
+---
+
+Every engineer on my team now uses AI to code. My job shifted from reviewing code to reviewing judgment.
+
+When a model can generate a plausible solution in seconds, the scarce skill is no longer typing. It's knowing whether the solution is right, safe, and worth keeping.
+
+What I coach now:
+- Read AI-generated code as critically as a stranger's PR
+- Understand it before you ship it, you own it either way
+- Use AI to go faster, not to skip thinking
+
+The tool got powerful. That makes human judgment more valuable, not less.
+
+#EngineeringManagement #AI #Leadership #TechLeadership #FutureOfWork

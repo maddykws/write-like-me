@@ -1,0 +1,23 @@
+# Post 60 — Day 60
+
+**Topic:** AI Project Management  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_60.gif`
+
+---
+
+Day 60 of 60. Here's everything I believe about engineering leadership in the AI era, compressed into one post.
+
+The tools changed completely. The job barely did.
+
+What still decides whether an AI team wins:
+- Measure before you believe (evals over vibes)
+- Make cost and quality visible to everyone
+- Design for failure, because the model will fail
+- Protect focus from the endless hype cycle
+- Hire for curiosity and judgment, not just speed
+- Build things your future team can safely change
+
+New models will keep arriving. These fundamentals won't expire. Thanks for following along, this is where the real work begins.
+
+#EngineeringManagement #AIProjectManagement #AI #Leadership #TechLeadership

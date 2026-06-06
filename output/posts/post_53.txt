@@ -1,0 +1,12 @@
+A senior engineer told me our Python tests were 'slowing the team down.' They were right, and the fix wasn't fewer tests.
+
+A 20-minute test suite that everyone skips locally is worse than no suite, because it gives false confidence and gets ignored.
+
+What we did as a team:
+- Split fast unit tests from slow integration tests
+- Made the fast suite run in under a minute, every commit
+- Pushed the slow stuff to CI where it doesn't block flow
+
+As a manager, when a good practice starts hurting, the answer is usually to fix the practice, not abandon it. Diagnose before you cut.
+
+#EngineeringManagement #Python #Testing #Leadership #DeveloperExperience

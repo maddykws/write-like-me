@@ -1,0 +1,20 @@
+# Post 36 — Day 36
+
+**Topic:** GPU  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_36.gif`
+
+---
+
+As an engineering manager, I don't optimize GPU kernels. But I do decide whether the team has time to.
+
+Infrastructure efficiency is almost always a prioritization problem disguised as a technical one. The know-how exists. The calendar space doesn't.
+
+What I've learned to do:
+- Treat a week of GPU optimization as an investment with a clear ROI
+- Show the team the cost curve so the 'why' is obvious
+- Defend that week from getting eaten by feature pressure
+
+The deepest technical wins often need a manager to simply make room for them.
+
+#EngineeringManagement #GPU #MLOps #Leadership #CostOptimization

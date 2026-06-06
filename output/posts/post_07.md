@@ -1,0 +1,21 @@
+# Post 07 — Day 7
+
+**Topic:** AI  
+**GIF style:** Terminal output  
+**Attach:** `post_07.gif`
+
+---
+
+Most "the AI hallucinated" complaints are really "we gave it no way to know the answer."
+
+Retrieval-augmented generation (RAG) fixes that by handing the model the right context at query time instead of hoping it memorized your data.
+
+The pipeline is simpler than the hype suggests:
+- Chunk your documents thoughtfully (this is where most RAG dies)
+- Embed and store them
+- Retrieve the most relevant chunks per question
+- Let the model answer using only that context
+
+Garbage retrieval = garbage answers. Spend your time on chunking and ranking, not the prompt.
+
+#AI #RAG #LLM #MachineLearning #GenAI

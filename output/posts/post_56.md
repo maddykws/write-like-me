@@ -1,0 +1,20 @@
+# Post 56 — Day 56
+
+**Topic:** AI Project Management  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_56.gif`
+
+---
+
+I rate AI project health on one signal above all others: how quickly the team can answer 'did that change make it better or worse?'
+
+If the answer takes a week of manual checking, the project is sick, no matter how good the demo looks. If it takes minutes, the project is healthy.
+
+What a fast feedback loop requires:
+- Automated evals anyone can run on demand
+- A baseline that's trusted and up to date
+- A culture where 'show me the numbers' is normal, not confrontational
+
+Iteration speed is the heartbeat of an AI team. Protect it, and almost everything else follows.
+
+#EngineeringManagement #AIProjectManagement #AI #Evals #Leadership

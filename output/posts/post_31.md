@@ -1,0 +1,20 @@
+# Post 31 — Day 31
+
+**Topic:** AI  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_31.gif`
+
+---
+
+One underrated engineering manager skill in the AI era: knowing when NOT to use AI.
+
+There's enormous pressure to put a model in everything. But a regex, a lookup table, or a simple rule is often faster, cheaper, and more reliable.
+
+My team's checklist before reaching for an LLM:
+- Is the problem actually fuzzy, or just unspecified?
+- Would deterministic logic be more testable here?
+- Are we adding a model to look modern, or to solve something?
+
+The goal was never to use AI. It was to solve the problem. Sometimes those are the same. Often they aren't.
+
+#EngineeringManagement #AI #Leadership #TechLeadership #Pragmatism

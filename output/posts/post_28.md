@@ -1,0 +1,20 @@
+# Post 28 — Day 28
+
+**Topic:** GPU  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_28.gif`
+
+---
+
+I learned to read an nvidia-smi output not because I write the kernels, but because as a manager I sign the cloud bill.
+
+You don't need to be an expert to ask the right questions. You need to know what 'healthy' looks like.
+
+What I keep an eye on:
+- Are the GPUs actually busy, or expensively idle?
+- Is memory the limit, or is the pipeline starving them?
+- Are we paying for top-tier cards to do work a cheaper tier could?
+
+Managers don't need to write the optimization. We need to create the space and incentive for someone to.
+
+#EngineeringManagement #GPU #MLOps #Leadership #CostOptimization

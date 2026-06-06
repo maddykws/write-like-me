@@ -1,0 +1,20 @@
+# Post 27 — Day 27
+
+**Topic:** AI Project Management  
+**GIF style:** Engineering Manager POV  
+**Attach:** `post_27.gif`
+
+---
+
+The hardest estimate I give as an engineering manager: how long will the AI feature take?
+
+With normal features, I can decompose and estimate. With AI, the honest answer is often "we'll know after the first eval."
+
+How I handle it without losing trust:
+- I commit to a spike, not a ship date, up front
+- I give stakeholders ranges with confidence levels, not false precision
+- I update the estimate publicly as we learn
+
+Pretending AI work is predictable is how you burn credibility. Naming the uncertainty is how you keep it.
+
+#EngineeringManagement #AIProjectManagement #AI #Leadership #Estimation

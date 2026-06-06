@@ -1,0 +1,23 @@
+# Post 15 — Day 15
+
+**Topic:** Python  
+**GIF style:** Terminal output  
+**Attach:** `post_15.gif`
+
+---
+
+If you're building with LLMs and don't have an eval harness, you don't have engineering. You have guessing with extra steps.
+
+The good news: a useful one is ~50 lines of Python.
+
+What a minimal harness needs:
+- A dataset of inputs with expected behavior
+- A function that calls your model
+- A scorer (exact match, regex, or an LLM judge)
+- A number at the end you can compare against last time
+
+Once that number exists, prompt tweaks stop being arguments and start being experiments.
+
+Build the ruler before you start measuring.
+
+#Python #AI #LLM #Evals #MachineLearning

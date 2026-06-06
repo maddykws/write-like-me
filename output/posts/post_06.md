@@ -1,0 +1,21 @@
+# Post 06 — Day 6
+
+**Topic:** Python  
+**GIF style:** Terminal output  
+**Attach:** `post_06.gif`
+
+---
+
+A Python for-loop over a million rows isn't slow because Python is slow. It's slow because you're paying the interpreter tax a million times.
+
+Vectorization moves that work down into C.
+
+A data job I rewrote went from 38 seconds to 0.4 seconds. Same laptop. Same logic. No loop.
+
+The shift in thinking:
+- Stop asking "how do I loop faster"
+- Start asking "how do I express this as one operation on the whole array"
+
+NumPy and pandas reward you for thinking in columns, not rows.
+
+#Python #NumPy #DataEngineering #Performance #Pandas
