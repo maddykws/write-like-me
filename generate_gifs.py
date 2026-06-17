@@ -1,679 +1,512 @@
 #!/usr/bin/env python3
 """
-Split-layout GIFs matching the Cursor IDE + post-text card style.
+Split-layout GIFs — fixed:
+  Phase 1: IDE left, RIGHT side dark/empty — code types out
+  Phase 2: Right card REVEALS after code done (fade-in)
+  Phase 3: Hold split view
+  Phase 4: Full-width "understanding" end card
 
-Left half  : Cursor/VS Code IDE  (sidebar + file tree + editor + outline + status bar)
-Right half : Styled post card     (large bold headline, cyan highlight, monospace bullets)
-
-Canvas: 1080×1080 (square, social-ready)
+3 themes: Tokyo Night (original), Dracula, GitHub Dark
 """
 
 from PIL import Image, ImageDraw, ImageFont
-import os, textwrap
+import os, re, textwrap
 
 OUT = "/home/user/write-like-me/post_assets"
 os.makedirs(OUT, exist_ok=True)
 
 W, H = 1080, 1080
-HALF = W // 2          # 540
+HALF = W // 2
 
-# ── fonts ────────────────────────────────────────────────────────────────────
-def load(path, size, fallback=None):
-    try:
-        return ImageFont.truetype(path, size)
-    except:
-        return fallback or ImageFont.load_default()
+# ── fonts ─────────────────────────────────────────────────────────────────────
+def load(path, size):
+    try:    return ImageFont.truetype(path, size)
+    except: return ImageFont.load_default()
 
-MONO_PATH  = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
-MONO_B_PATH= "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
-SANS_PATH  = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-SANS_B_PATH= "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+MONO   = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
+MONO_B = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
+SANS   = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+SANS_B = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
-F_CODE   = load(MONO_PATH,   13)
-F_CODE_B = load(MONO_B_PATH, 13)
-F_UI     = load(MONO_PATH,   11)
-F_UI_B   = load(MONO_B_PATH, 11)
-F_HEAD   = load(SANS_B_PATH, 52)
-F_HEAD2  = load(SANS_B_PATH, 44)
-F_BULLET = load(MONO_PATH,   22)
-F_LABEL  = load(MONO_B_PATH, 16)
+F_CODE  = load(MONO,   13)
+F_UI    = load(MONO,   11)
+F_UI_B  = load(MONO_B, 11)
+F_HEAD1 = load(SANS_B, 54)
+F_HEAD2 = load(SANS_B, 46)
+F_BODY  = load(MONO,   21)
+F_END_H = load(SANS_B, 62)
+F_END_B = load(SANS,   26)
 
-# ── colour palette (Cursor dark) ──────────────────────────────────────────────
-C = {
-    "bg":       "#1a1b26",   # editor bg
-    "sidebar":  "#16161e",   # sidebar / panel bg
-    "tab_bar":  "#13131a",   # tab strip
-    "tab_act":  "#1a1b26",   # active tab bg
-    "status":   "#7aa2f7",   # status bar (blue)
-    "status_bg":"#1a1b26",
-    "ln":       "#3b4261",   # line numbers
-    "select":   "#283457",   # active file highlight
-    "text":     "#c0caf5",   # default text
-    "comment":  "#565f89",
-    "keyword":  "#bb9af7",
-    "func":     "#7dcfff",
-    "string":   "#9ece6a",
-    "number":   "#ff9e64",
-    "type":     "#f7768e",
-    "punct":    "#89ddff",
-    "dim":      "#3b4261",
-    "cyan":     "#2ac3de",
-    "yellow":   "#e0af68",
-    "outline_h":"#bb9af7",
-    # right card
-    "card_bg":  "#0d0e14",
-    "card_text":"#c0caf5",
-    "card_hi":  "#2ac3de",   # cyan highlight
-    "card_dim": "#565f89",
-    "divider":  "#2ac3de",
+# ── themes ────────────────────────────────────────────────────────────────────
+THEMES = {
+    "tokyo": {
+        "name":       "Tokyo Night",
+        "bg":         "#1a1b26",
+        "sidebar":    "#16161e",
+        "tab_bar":    "#13131a",
+        "status_bg":  "#7aa2f7",
+        "ln":         "#3b4261",
+        "select":     "#283457",
+        "text":       "#c0caf5",
+        "comment":    "#565f89",
+        "keyword":    "#bb9af7",
+        "func":       "#7dcfff",
+        "string":     "#9ece6a",
+        "number":     "#ff9e64",
+        "type":       "#f7768e",
+        "punct":      "#89ddff",
+        "dim":        "#3b4261",
+        "folder":     "#e0af68",
+        "accent":     "#2ac3de",     # cyan — card highlight
+        "card_bg":    "#0d0e14",
+        "card_text":  "#c0caf5",
+        "divider":    "#2ac3de",
+        "end_bg":     "#13131a",
+        "end_accent": "#7aa2f7",
+    },
+    "dracula": {
+        "name":       "Dracula",
+        "bg":         "#282a36",
+        "sidebar":    "#21222c",
+        "tab_bar":    "#191a21",
+        "status_bg":  "#bd93f9",
+        "ln":         "#6272a4",
+        "select":     "#44475a",
+        "text":       "#f8f8f2",
+        "comment":    "#6272a4",
+        "keyword":    "#ff79c6",
+        "func":       "#50fa7b",
+        "string":     "#f1fa8c",
+        "number":     "#bd93f9",
+        "type":       "#ffb86c",
+        "punct":      "#ff79c6",
+        "dim":        "#44475a",
+        "folder":     "#ffb86c",
+        "accent":     "#bd93f9",     # purple
+        "card_bg":    "#191a21",
+        "card_text":  "#f8f8f2",
+        "divider":    "#bd93f9",
+        "end_bg":     "#21222c",
+        "end_accent": "#ff79c6",
+    },
+    "github": {
+        "name":       "GitHub Dark",
+        "bg":         "#0d1117",
+        "sidebar":    "#010409",
+        "tab_bar":    "#010409",
+        "status_bg":  "#388bfd",
+        "ln":         "#30363d",
+        "select":     "#1f2937",
+        "text":       "#e6edf3",
+        "comment":    "#8b949e",
+        "keyword":    "#ff7b72",
+        "func":       "#79c0ff",
+        "string":     "#a5d6ff",
+        "number":     "#79c0ff",
+        "type":       "#ffa657",
+        "punct":      "#ff7b72",
+        "dim":        "#30363d",
+        "folder":     "#e3b341",
+        "accent":     "#58a6ff",     # blue
+        "card_bg":    "#010409",
+        "card_text":  "#e6edf3",
+        "divider":    "#58a6ff",
+        "end_bg":     "#0d1117",
+        "end_accent": "#3fb950",
+    },
 }
 
-LH_CODE = 19   # code line height
-LH_UI   = 16   # sidebar line height
+KEYWORDS_SET = {
+    "__global__","__shared__","__device__","__syncthreads","float","int",
+    "void","auto","for","if","else","return","import","from","def","class",
+    "with","as","True","False","None","and","or","not","in","double",
+}
 
-KEYWORDS = {"__global__","__shared__","__device__","__syncthreads","float","int",
-            "void","auto","for","if","else","return","import","from","def","class",
-            "with","as","True","False","None","and","or","not","in"}
-
-# ── syntax highlight for one line ─────────────────────────────────────────────
-import re
-def hl_tokens(line):
-    """Return list of (text, color) for a code line."""
+def hl_tokens(line, T):
     if re.match(r'\s*(#|//)', line):
-        return [(line, C["comment"])]
-    tokens = []
-    i = 0
+        return [(line, T["comment"])]
     pattern = re.compile(
-        r'("(?:[^"\\]|\\.)*"|\'(?:[^\'\\]|\\.)*\')'   # strings
-        r'|(\b(?:' + '|'.join(re.escape(k) for k in KEYWORDS) + r')\b)'
-        r'|(\b\d+\.?\d*\b)'                            # numbers
-        r'|([A-Za-z_]\w*(?=\s*\())'                   # function calls
-        r'|([^\w\s])'                                  # punctuation
-        r'|(\w+)'                                      # identifiers
-        r'|(\s+)'                                      # whitespace
+        r'("(?:[^"\\]|\\.)*"|\'(?:[^\'\\]|\\.)*\')'
+        r'|(\b(?:' + '|'.join(re.escape(k) for k in KEYWORDS_SET) + r')\b)'
+        r'|(\b\d+\.?\d*(?:e[+-]?\d+)?[fF]?\b)'
+        r'|([A-Za-z_]\w*(?=\s*\())'
+        r'|([^\w\s])'
+        r'|(\w+)'
+        r'|(\s+)'
     )
+    tokens = []
     for m in pattern.finditer(line):
         s, kw, num, fn, pu, ident, ws = m.groups()
         txt = m.group(0)
-        if ws:   col = C["text"]
-        elif s:  col = C["string"]
-        elif kw: col = C["keyword"]
-        elif num:col = C["number"]
-        elif fn: col = C["func"]
-        elif pu: col = C["punct"]
-        else:    col = C["text"]
+        if ws:    col = T["text"]
+        elif s:   col = T["string"]
+        elif kw:  col = T["keyword"]
+        elif num: col = T["number"]
+        elif fn:  col = T["func"]
+        elif pu:  col = T["punct"]
+        else:     col = T["text"]
         tokens.append((txt, col))
-    return tokens if tokens else [(line, C["text"])]
+    return tokens or [(line, T["text"])]
 
 
-# ── draw the LEFT IDE panel ───────────────────────────────────────────────────
-SIDEBAR_W  = 200
-TAB_H      = 32
-STATUS_H   = 24
-OUTLINE_H  = 180
+# ── IDE renderer ──────────────────────────────────────────────────────────────
+AB_W = 36    # activity bar
+SB_W = 196   # sidebar
+TAB_H = 32
+STATUS_H = 24
+OUTLINE_H = 175
+GUTTER_W = 36
+LH = 18      # line height in editor
+LH_SB = 17   # sidebar line height
 
-def draw_ide(draw, img,
-             filename, project_name,
-             file_tree,        # list of (indent, name, is_folder, is_active)
-             code_lines,       # list of strings typed so far
-             cursor_li,        # active line index (0-based)
-             outline_items,    # list of (indent, label, is_section)
-             branch="main", lang="CUDA", cols=256):
-    """Draw the full Cursor IDE onto the left half of `draw`."""
-    x0, y0, x1, y1 = 0, 0, HALF, H
+def render_ide(T, filename, file_tree, code_lines, cursor_li, outline_items,
+               branch="main", lang="CUDA"):
+    """Render the left-half IDE panel into a new 540×1080 image."""
+    img  = Image.new("RGB", (HALF, H), T["bg"])
+    draw = ImageDraw.Draw(img)
 
-    # ── background ──
-    draw.rectangle([x0, y0, x1, y1], fill=C["sidebar"])
+    # ── activity bar ──
+    draw.rectangle([0, 0, AB_W, H], fill=T["tab_bar"])
+    for ay in [55, 110, 165, 220, 275]:
+        draw.rectangle([6, ay, AB_W-6, ay+22], fill=T["dim"])
 
-    # ── activity bar (thin strip on far left) ──
-    AB = 36
-    draw.rectangle([x0, y0, x0+AB, y1], fill=C["tab_bar"])
-    for ay in [60, 120, 180, 240]:
-        draw.rectangle([x0+8, y0+ay, x0+AB-8, y0+ay+24], fill=C["dim"], outline=None)
-
-    # ── sidebar (file explorer) ──
-    SB_X = x0 + AB
-    SB_W = SIDEBAR_W
-    draw.rectangle([SB_X, y0, SB_X+SB_W, y1], fill=C["sidebar"])
-    draw.text((SB_X+10, y0+12), "EXPLORER", fill=C["comment"], font=F_UI_B)
-    ty = y0 + 32
+    # ── sidebar ──
+    SB_X = AB_W
+    draw.rectangle([SB_X, 0, SB_X+SB_W, H], fill=T["sidebar"])
+    draw.text((SB_X+8, 10), "EXPLORER", fill=T["comment"], font=F_UI_B)
+    ty = 30
     for indent, name, is_folder, is_active in file_tree:
-        fx = SB_X + 8 + indent * 12
+        if ty > H - OUTLINE_H - STATUS_H - 10:
+            break
+        fx = SB_X + 6 + indent * 11
         if is_active:
-            draw.rectangle([SB_X, ty-1, SB_X+SB_W, ty+LH_UI], fill=C["select"])
+            draw.rectangle([SB_X, ty-1, SB_X+SB_W, ty+LH_SB], fill=T["select"])
         icon = "▾ " if is_folder else "  "
-        col  = C["text"] if is_active else (C["yellow"] if is_folder else C["dim"])
+        col  = T["folder"] if is_folder else (T["text"] if is_active else T["dim"])
         draw.text((fx, ty), icon + name, fill=col, font=F_UI)
-        ty += LH_UI + 1
-        if ty > y1 - OUTLINE_H - STATUS_H - 40:
-            break
+        ty += LH_SB
 
-    # outline panel
-    OL_Y = y1 - OUTLINE_H - STATUS_H
-    draw.rectangle([SB_X, OL_Y, SB_X+SB_W, y1-STATUS_H], fill=C["tab_bar"])
-    draw.text((SB_X+10, OL_Y+6), "OUTLINE", fill=C["comment"], font=F_UI_B)
-    oy = OL_Y + 22
+    # ── outline panel ──
+    OL_Y = H - OUTLINE_H - STATUS_H
+    draw.rectangle([SB_X, OL_Y, SB_X+SB_W, H-STATUS_H], fill=T["tab_bar"])
+    draw.line([SB_X, OL_Y, SB_X+SB_W, OL_Y], fill=T["dim"], width=1)
+    draw.text((SB_X+8, OL_Y+5), "OUTLINE", fill=T["comment"], font=F_UI_B)
+    oy = OL_Y + 20
     for indent, label, is_sec in outline_items:
-        ox = SB_X + 8 + indent * 10
-        col = C["outline_h"] if is_sec else C["dim"]
-        draw.text((ox, oy), label, fill=col, font=F_UI)
-        oy += LH_UI
-        if oy > y1 - STATUS_H - 4:
+        if oy > H - STATUS_H - 3:
             break
+        ox = SB_X + 6 + indent*10
+        col = T["accent"] if is_sec else T["comment"]
+        draw.text((ox, oy), label, fill=col, font=F_UI)
+        oy += LH_SB
 
-    # ── editor area ──
+    # ── editor ──
     ED_X = SB_X + SB_W
-    ED_W = x1 - ED_X
-    GUTTER = 38
-    CODE_X = ED_X + GUTTER
-
-    draw.rectangle([ED_X, y0, x1, y1], fill=C["bg"])
+    ED_W = HALF - ED_X
 
     # tab bar
-    draw.rectangle([ED_X, y0, x1, y0+TAB_H], fill=C["tab_bar"])
-    tab_w = min(len(filename)*9 + 30, 200)
-    draw.rectangle([ED_X, y0, ED_X+tab_w, y0+TAB_H], fill=C["tab_act"])
-    draw.line([ED_X+tab_w, y0, ED_X+tab_w, y0+TAB_H], fill=C["dim"], width=1)
-    dot_col = C["type"] if cursor_li >= 0 else C["comment"]
-    draw.ellipse([ED_X+8, y0+11, ED_X+18, y0+21], fill=dot_col)
-    draw.text((ED_X+22, y0+8), filename, fill=C["text"], font=F_UI)
+    draw.rectangle([ED_X, 0, HALF, TAB_H], fill=T["tab_bar"])
+    tab_end = ED_X + min(len(filename)*8+36, 220)
+    draw.rectangle([ED_X, 0, tab_end, TAB_H], fill=T["bg"])
+    draw.line([tab_end, 0, tab_end, TAB_H], fill=T["dim"])
+    dot = T["type"] if cursor_li >= 0 else T["comment"]
+    draw.ellipse([ED_X+7, TAB_H//2-5, ED_X+17, TAB_H//2+5], fill=dot)
+    draw.text((ED_X+21, (TAB_H-11)//2), filename, fill=T["text"], font=F_UI)
 
     # gutter
-    draw.rectangle([ED_X, y0+TAB_H, ED_X+GUTTER, y1-STATUS_H], fill=C["sidebar"])
+    draw.rectangle([ED_X, TAB_H, ED_X+GUTTER_W, H-STATUS_H], fill=T["sidebar"])
 
-    # code lines
-    vis = (H - y0 - TAB_H - STATUS_H - 8) // LH_CODE
-    start = max(0, cursor_li - vis + 4)
-    cy_base = y0 + TAB_H + 6
-    for i, line in enumerate(code_lines[start:start+vis]):
-        ln = start + i + 1
-        cy = cy_base + i * LH_CODE
-        draw.text((ED_X+4, cy), f"{ln:>3}", fill=C["ln"], font=F_UI)
-        # highlight current line
-        if start + i == cursor_li:
-            draw.rectangle([ED_X+GUTTER, cy-1, x1, cy+LH_CODE-1], fill="#1e2030")
-        # syntax highlight
+    # code area — FIX: never scroll, just show from line 0, clip at bottom
+    CODE_X = ED_X + GUTTER_W
+    code_top = TAB_H + 5
+    code_bot = H - STATUS_H - OUTLINE_H - 2   # stop before outline area
+    max_vis  = (code_bot - code_top) // LH
+
+    # scroll so cursor stays in view
+    start = max(0, cursor_li - max_vis + 3)
+
+    for i, line in enumerate(code_lines[start:start + max_vis]):
+        abs_li = start + i
+        cy = code_top + i * LH
+        # line number
+        draw.text((ED_X+2, cy), f"{abs_li+1:>3}", fill=T["ln"], font=F_UI)
+        # active line highlight
+        if abs_li == cursor_li:
+            draw.rectangle([ED_X+GUTTER_W, cy-1, HALF, cy+LH-1], fill=T["select"])
+        # tokens
         cx = CODE_X
-        for tok, col in hl_tokens(line):
+        for tok, col in hl_tokens(line, T):
+            tw = draw.textlength(tok, font=F_CODE)
+            if cx + tw > HALF - 2:
+                break
             draw.text((cx, cy), tok, fill=col, font=F_CODE)
-            cx += draw.textlength(tok, font=F_CODE)
-        if cx > x1 - 4:
-            break
+            cx += tw
 
-    # cursor bar
-    if 0 <= cursor_li - start < vis:
-        ci = cursor_li - start
-        cur_line = code_lines[cursor_li] if cursor_li < len(code_lines) else ""
-        cur_x = CODE_X + draw.textlength(cur_line, font=F_CODE)
-        cur_y = cy_base + ci * LH_CODE
-        draw.rectangle([cur_x, cur_y, cur_x+2, cur_y+LH_CODE-2], fill=C["text"])
+    # cursor
+    vis_i = cursor_li - start
+    if 0 <= vis_i < max_vis and cursor_li < len(code_lines):
+        cur_y = code_top + vis_i * LH
+        cur_x = CODE_X + draw.textlength(code_lines[cursor_li], font=F_CODE)
+        cur_x = min(cur_x, HALF - 4)
+        draw.rectangle([cur_x, cur_y, cur_x+2, cur_y+LH-2], fill=T["text"])
 
     # status bar
-    sb_y = y1 - STATUS_H
-    draw.rectangle([x0, sb_y, x1, y1], fill=C["status"])
-    draw.text((AB+10, sb_y+5), f"  {branch}  ↑2 ↓0  {lang}  ·  UTF-8  ·  LF  ·  {cols} cols",
-              fill="#1a1b26", font=F_UI_B)
-    draw.text((x1-80, sb_y+5), "GPU: H100", fill="#1a1b26", font=F_UI_B)
+    draw.rectangle([0, H-STATUS_H, HALF, H], fill=T["status_bg"])
+    draw.text((AB_W+6, H-STATUS_H+5),
+              f"  {branch}  ↑2 ↓0  {lang}  ·  UTF-8  ·  LF",
+              fill=T["bg"], font=F_UI_B)
+    draw.text((HALF-70, H-STATUS_H+5), "GPU: H100", fill=T["bg"], font=F_UI_B)
+
+    return img
 
 
-# ── draw the RIGHT post card ──────────────────────────────────────────────────
-def draw_card(draw, headline_parts, bullets, accent=C["card_hi"]):
-    """
-    headline_parts : list of (text, is_highlight)
-    bullets        : list of strings (use '→ ' prefix)
-    """
-    x0, y0, x1, y1 = HALF, 0, W, H
-    draw.rectangle([x0, y0, x1, y1], fill=C["card_bg"])
+# ── right card renderer ────────────────────────────────────────────────────────
+def render_card(T, headline_parts, bullets, alpha=255):
+    """Render right-half post card. alpha 0=invisible 255=full."""
+    img  = Image.new("RGBA", (HALF, H), T["card_bg"] + "ff")
+    draw = ImageDraw.Draw(img)
 
-    # padding
-    px = x0 + 48
-    py = y0 + 120
+    px = 52
+    cy = 115
 
-    # headline — word-wrap into ~18 chars per line, colour per part
-    # render each part sequentially, wrapping at x1-48
-    LINE_MAX = x1 - 48
-    cx, cy = px, py
-    line_h_head = 64
-
-    def render_head_word(word, hi):
-        nonlocal cx, cy
-        col  = accent if hi else "#ffffff"
-        font = F_HEAD
-        tw = draw.textlength(word + " ", font=font)
-        if cx + tw > LINE_MAX and cx > px:
-            cx  = px
-            cy += line_h_head
-        draw.text((cx, cy), word, fill=col, font=font)
-        cx += draw.textlength(word + " ", font=font)
-
+    # headline
+    line_h = 68
+    cx = px
     for text, hi in headline_parts:
+        col  = T["accent"] if hi else "#ffffff"
+        font = F_HEAD1
         for word in text.split():
-            render_head_word(word, hi)
-
-    cy += line_h_head + 20
+            tw = draw.textlength(word + " ", font=font)
+            if cx + tw > HALF - px and cx > px:
+                cx  = px
+                cy += line_h
+            draw.text((cx, cy), word, fill=col, font=font)
+            cx += tw
+    cy += line_h + 18
 
     # divider
-    draw.rectangle([px, cy, px+120, cy+4], fill=accent)
-    cy += 30
+    draw.rectangle([px, cy, px+110, cy+4], fill=T["divider"])
+    cy += 26
 
     # bullets
     for b in bullets:
-        # wrap long lines
-        wrapped = textwrap.wrap(b, width=28)
-        for wi, wline in enumerate(wrapped):
-            draw.text((px, cy), wline, fill=C["card_text"] if wi==0 else C["card_text"],
-                      font=F_BULLET)
-            cy += 34
-        cy += 4
+        draw.text((px, cy), b, fill=T["card_text"], font=F_BODY)
+        cy += 36
+
+    # apply alpha
+    if alpha < 255:
+        mask = Image.new("L", (HALF, H), alpha)
+        img.putalpha(mask)
+
+    return img
 
 
-# ── frame builder ─────────────────────────────────────────────────────────────
-def make_frames(ide_args_static, code_lines, term_output_ignored,
-                headline_parts, bullets):
-    """Animate code typing on left; right card is static throughout."""
+def render_end_card(T, headline, sub_bullets):
+    """Full-width end card."""
+    img  = Image.new("RGB", (W, H), T["end_bg"])
+    draw = ImageDraw.Draw(img)
+
+    # top accent bar
+    draw.rectangle([0, 0, W, 6], fill=T["end_accent"])
+
+    cx, cy = 80, 160
+    line_h = 78
+    for word in headline.split():
+        tw = draw.textlength(word + " ", font=F_END_H)
+        # line break hints via '|'
+        if word == "|":
+            cx  = 80
+            cy += line_h
+            continue
+        if cx + tw > W - 80 and cx > 80:
+            cx  = 80
+            cy += line_h
+        col = T["end_accent"] if word.startswith("*") and word.endswith("*") \
+              else "#ffffff"
+        word_clean = word.strip("*")
+        draw.text((cx, cy), word_clean, fill=col, font=F_END_H)
+        cx += draw.textlength(word_clean + " ", font=F_END_H)
+
+    cy += line_h + 30
+    draw.rectangle([80, cy, 80+160, cy+5], fill=T["end_accent"])
+    cy += 30
+
+    for b in sub_bullets:
+        draw.text((80, cy), b, fill=T["card_text"] if "card_text" in T else "#c0caf5",
+                  font=F_END_B)
+        cy += 44
+
+    return img
+
+
+# ── main GIF builder ──────────────────────────────────────────────────────────
+def build_gif(T, filename, file_tree, code_lines, outline_items,
+              headline_parts, bullets,
+              end_headline, end_bullets,
+              branch="main", lang="CUDA",
+              char_delay=45, line_pause=5,
+              reveal_steps=18, hold=28, end_hold=35):
+
     frames = []
-    filename     = ide_args_static["filename"]
-    project      = ide_args_static["project"]
-    file_tree    = ide_args_static["file_tree"]
-    outline      = ide_args_static["outline"]
-    branch       = ide_args_static.get("branch", "main")
-    lang         = ide_args_static.get("lang", "CUDA")
-
     typed = []
 
-    def make_frame(typed_lines, cursor_li):
-        img  = Image.new("RGB", (W, H), C["card_bg"])
-        draw = ImageDraw.Draw(img)
-        draw_ide(draw, img, filename, project, file_tree,
-                 typed_lines, cursor_li, outline, branch, lang)
-        draw_card(draw, headline_parts, bullets)
-        return img
+    def compose(typed_lines, cursor_li, card_alpha=0):
+        ide_img  = render_ide(T, filename, file_tree, typed_lines,
+                               cursor_li, outline_items, branch, lang)
+        full = Image.new("RGB", (W, H), T["card_bg"])
+        full.paste(ide_img, (0, 0))
+        if card_alpha > 0:
+            card = render_card(T, headline_parts, bullets, alpha=card_alpha)
+            # paste with alpha
+            base = Image.new("RGB", (HALF, H), T["card_bg"])
+            card_rgb = card.convert("RGB")
+            blended = Image.blend(base, card_rgb, card_alpha / 255)
+            full.paste(blended, (HALF, 0))
+        return full
 
-    # type code line by line
+    # ── Phase 1: type code, right side dark ──
     for li, line in enumerate(code_lines):
         typed.append("")
         for ci, ch in enumerate(line):
             typed[-1] += ch
-            if ci % 2 == 0:          # emit every 2nd char to cut frame count
-                frames.append((make_frame(list(typed), li), 50))
-        # end-of-line pause
-        for _ in range(3):
-            frames.append((make_frame(list(typed), li), 80))
+            if ci % 2 == 0:
+                frames.append((compose(list(typed), li, 0), char_delay))
+        for _ in range(line_pause):
+            frames.append((compose(list(typed), li, 0), 70))
 
-    # cursor blink at end
-    last = list(typed)
-    last_li = len(code_lines) - 1
-    for _ in range(5):
-        frames.append((make_frame(last, last_li), 350))
-        img2 = Image.new("RGB", (W, H), C["card_bg"])
-        d2   = ImageDraw.Draw(img2)
-        draw_ide(d2, img2, filename, project, file_tree,
-                 last, -1, outline, branch, lang)
-        draw_card(d2, headline_parts, bullets)
-        frames.append((img2, 350))
+    last_typed = list(typed)
+    last_li    = len(code_lines) - 1
 
-    # hold
-    final = make_frame(last, last_li)
-    for _ in range(30):
-        frames.append((final, 100))
+    # cursor blink pause before reveal
+    for _ in range(3):
+        frames.append((compose(last_typed, last_li, 0), 350))
+        frames.append((compose(last_typed, -1,      0), 350))
+
+    # ── Phase 2: card reveals ──
+    for step in range(reveal_steps + 1):
+        a = int(255 * step / reveal_steps)
+        frames.append((compose(last_typed, last_li, a), 35))
+
+    # ── Phase 3: hold split view ──
+    split_final = compose(last_typed, last_li, 255)
+    for _ in range(hold):
+        frames.append((split_final, 100))
+
+    # ── Phase 4: full-width end card ──
+    end_img = render_end_card(T, end_headline, end_bullets)
+    for _ in range(end_hold):
+        frames.append((end_img, 100))
 
     return frames
 
 
-def save_gif(frames, path, colors=80):
-    imgs = [f[0] for f in frames]
+def save_gif(frames, path, colors=96):
+    imgs = [f[0].quantize(colors=colors, method=Image.Quantize.MEDIANCUT)
+            for f in frames]
     durs = [f[1] for f in frames]
-    # quantize
-    qimgs = []
-    for im in imgs:
-        qimgs.append(im.quantize(colors=colors, method=Image.Quantize.MEDIANCUT))
-    qimgs[0].save(path, save_all=True, append_images=qimgs[1:],
-                  duration=durs, loop=0, optimize=True)
+    imgs[0].save(path, save_all=True, append_images=imgs[1:],
+                 duration=durs, loop=0, optimize=True)
     print(f"Saved {path}  ({os.path.getsize(path)//1024} KB, {len(frames)} frames)")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  POST 1 — GEMM tiled kernel  (main hook post)
+#  Shared content
 # ══════════════════════════════════════════════════════════════════════════════
-def post1():
-    ide = dict(
-        filename="03_gemm_tiled.cu",
-        project="cuda-kernels-from-scratch",
-        branch="main", lang="CUDA", cols=256,
-        file_tree=[
-            (0, "cuda-kernels-from-scratch", True,  False),
-            (1, "src",                       True,  False),
-            (2, "01_vector_add.cu",          False, False),
-            (2, "02_matmul_naive.cu",        False, False),
-            (2, "03_gemm_tiled.cu",          False, True ),
-            (2, "04_softmax.cu",             False, False),
-            (2, "05_flash_attention.cu",     False, False),
-            (1, "bench",                     True,  False),
-            (2, "bench.py",                  False, False),
-            (1, "notes",                     True,  False),
-            (2, "why_kernels_matter.md",     False, False),
-            (0, "README.md",                 False, False),
-            (0, "Makefile",                  False, False),
-        ],
-        outline=[
-            (0, "__global__ gemm_tiled", True),
-            (1, "↳ load A tile → smem",  False),
-            (1, "↳ load B tile → smem",  False),
-            (1, "↳ __syncthreads()",     False),
-            (1, "↳ tile-mma accumulate", False),
-            (1, "↳ __syncthreads()",     False),
-            (0, "host_launcher()",       True),
-        ],
-    )
-    code = [
-        "#define TILE 16",
-        "",
-        "__global__ void gemm_tiled(",
-        "    float* A, float* B, float* C,",
-        "    int M, int N, int K) {",
-        "  __shared__ float As[TILE][TILE];",
-        "  __shared__ float Bs[TILE][TILE];",
-        "  int row = blockIdx.y*TILE + threadIdx.y;",
-        "  int col = blockIdx.x*TILE + threadIdx.x;",
-        "  float acc = 0.0f;",
-        "  for (int t = 0; t < K/TILE; t++) {",
-        "    As[threadIdx.y][threadIdx.x]",
-        "      = A[row*K + t*TILE + threadIdx.x];",
-        "    Bs[threadIdx.y][threadIdx.x]",
-        "      = B[(t*TILE+threadIdx.y)*N + col];",
-        "    __syncthreads();",
-        "    for (int k=0; k<TILE; k++)",
-        "      acc += As[threadIdx.y][k]",
-        "           * Bs[k][threadIdx.x];",
-        "    __syncthreads();",
-        "  }",
-        "  C[row*N + col] = acc;",
-        "}",
-    ]
-    hl = [
-        ("Every AI engineer should learn to write ", False),
-        ("exactly one CUDA kernel.", True),
-    ]
-    bullets = [
-        "→ not because you'll write them at work",
-        "→ because the mental model",
-        "   changes everything",
-        "→ ~200 lines.  one weekend.",
-        "→ you'll never look at PyTorch",
-        "   the same way again",
-    ]
-    frames = make_frames(ide, code, [], hl, bullets)
-    save_gif(frames, f"{OUT}/post1.gif")
+FILE_TREE = [
+    (0, "cuda-kernels-from-scratch", True,  False),
+    (1, "src",                       True,  False),
+    (2, "01_vector_add.cu",          False, False),
+    (2, "02_matmul_naive.cu",        False, False),
+    (2, "03_gemm_tiled.cu",          False, True ),
+    (2, "04_softmax.cu",             False, False),
+    (2, "05_flash_attention.cu",     False, False),
+    (1, "bench",                     True,  False),
+    (2, "bench.py",                  False, False),
+    (1, "notes",                     True,  False),
+    (2, "why_kernels_matter.md",     False, False),
+    (0, "README.md",                 False, False),
+    (0, "Makefile",                  False, False),
+]
 
+OUTLINE = [
+    (0, "__global__ gemm_tiled",  True),
+    (1, "↳ load A tile → smem",   False),
+    (1, "↳ load B tile → smem",   False),
+    (1, "↳ __syncthreads()",      False),
+    (1, "↳ tile-mma accumulate",  False),
+    (1, "↳ __syncthreads()",      False),
+    (0, "host_launcher()",        True),
+]
 
-# ══════════════════════════════════════════════════════════════════════════════
-#  POST 2 — Batch size / MFU
-# ══════════════════════════════════════════════════════════════════════════════
-def post2():
-    ide = dict(
-        filename="profile_mfu.py",
-        project="gpu-profiling-toolkit",
-        branch="main", lang="Python", cols=200,
-        file_tree=[
-            (0, "gpu-profiling-toolkit",  True,  False),
-            (1, "src",                    True,  False),
-            (2, "profile_mfu.py",         False, True ),
-            (2, "memory_bandwidth.py",    False, False),
-            (2, "kernel_occupancy.py",    False, False),
-            (1, "results",                True,  False),
-            (2, "mfu_vs_batch.csv",       False, False),
-            (2, "mfu_vs_batch.png",       False, False),
-            (0, "README.md",              False, False),
-        ],
-        outline=[
-            (0, "bench(model, batch)", True),
-            (1, "↳ warmup loop",       False),
-            (1, "↳ timed loop",        False),
-            (1, "↳ compute MFU",       False),
-            (0, "main()",              True),
-            (1, "↳ for batch in ...",  False),
-        ],
-    )
-    code = [
-        "import torch, time",
-        "",
-        "GPU_PEAK = 312e12  # A100 BF16",
-        "",
-        "def bench(model, batch):",
-        "    x = torch.randn(batch, 512, 1024).cuda()",
-        "    torch.cuda.synchronize()",
-        "    t0 = time.perf_counter()",
-        "    for _ in range(20): model(x, x)",
-        "    torch.cuda.synchronize()",
-        "    elapsed = (time.perf_counter() - t0) / 20",
-        "    flops = 2 * batch * 512 * 1024 * 12 * 1024",
-        "    mfu = flops / (elapsed * GPU_PEAK) * 100",
-        "    print(f'batch={batch:>3}  MFU={mfu:.1f}%')",
-        "",
-        "model = torch.nn.Transformer(d_model=1024).cuda()",
-        "for b in [1, 4, 16, 64, 128]:",
-        "    bench(model, b)",
-    ]
-    hl = [
-        ("Why is your GPU stuck at ", False),
-        ("34%?", True),
-        (" It's not the model.", False),
-    ]
-    bullets = [
-        "→ it's memory access patterns",
-        "→ batch=1   →  3% MFU",
-        "→ batch=128 → 74% MFU",
-        "→ same hardware, same model",
-        "→ this is why batch size is",
-        "   the first knob to tune",
-    ]
-    frames = make_frames(ide, code, [], hl, bullets)
-    save_gif(frames, f"{OUT}/post2.gif")
+CODE = [
+    "#define TILE 16",
+    "",
+    "__global__ void gemm_tiled(",
+    "    float* A, float* B, float* C,",
+    "    int M, int N, int K) {",
+    "  __shared__ float As[TILE][TILE];",
+    "  __shared__ float Bs[TILE][TILE];",
+    "  int row = blockIdx.y*TILE + threadIdx.y;",
+    "  int col = blockIdx.x*TILE + threadIdx.x;",
+    "  float acc = 0.0f;",
+    "  for (int t = 0; t < K/TILE; t++) {",
+    "    As[threadIdx.y][threadIdx.x]",
+    "      = A[row*K + t*TILE + threadIdx.x];",
+    "    Bs[threadIdx.y][threadIdx.x]",
+    "      = B[(t*TILE+threadIdx.y)*N + col];",
+    "    __syncthreads();",
+    "    for (int k = 0; k < TILE; k++)",
+    "      acc += As[threadIdx.y][k]",
+    "           * Bs[k][threadIdx.x];",
+    "    __syncthreads();",
+    "  }",
+    "  C[row*N + col] = acc;",
+    "}",
+]
+
+HEADLINE = [
+    ("Every AI engineer should learn to write ", False),
+    ("exactly one CUDA kernel.", True),
+]
+
+BULLETS = [
+    "→ not because you'll write them at work",
+    "→ because the mental model changes everything",
+    "→ ~200 lines.  one weekend.",
+    "→ you'll never look at PyTorch the same way",
+]
+
+END_HEADLINE = (
+    "After you write it | you *understand* | everything."
+)
+
+END_BULLETS = [
+    "→  why batch size is the first perf knob",
+    "→  why FP8 doubles throughput",
+    "→  why fused kernels exist",
+    "→  how to read a profiler trace",
+    "→  why Flash Attention matters",
+    "",
+    "   Suggested start: GEMM with tiling.  ~200 lines.",
+]
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  POST 3 — FP8 vs FP16
+#  Generate 3 themes
 # ══════════════════════════════════════════════════════════════════════════════
-def post3():
-    ide = dict(
-        filename="fp8_bench.py",
-        project="precision-experiments",
-        branch="main", lang="Python", cols=180,
-        file_tree=[
-            (0, "precision-experiments",  True,  False),
-            (1, "src",                    True,  False),
-            (2, "fp8_bench.py",           False, True ),
-            (2, "fp16_baseline.py",       False, False),
-            (2, "loss_scaling.py",        False, False),
-            (1, "notebooks",              True,  False),
-            (2, "fp8_analysis.ipynb",     False, False),
-            (0, "requirements.txt",       False, False),
-        ],
-        outline=[
-            (0, "bench(dtype, label)", True),
-            (1, "↳ warmup",            False),
-            (1, "↳ timed matmul",      False),
-            (1, "↳ print ms/iter",     False),
-            (0, "main",                True),
-            (1, "↳ bench FP16",        False),
-            (1, "↳ bench FP8",         False),
-        ],
-    )
-    code = [
-        "import torch, time",
-        "",
-        "SEQ, D = 2048, 4096",
-        "",
-        "def bench(dtype, label):",
-        "    x = torch.randn(SEQ, D, dtype=dtype).cuda()",
-        "    w = torch.randn(D, D,   dtype=dtype).cuda()",
-        "    for _ in range(10): torch.matmul(x, w)  # warmup",
-        "    torch.cuda.synchronize()",
-        "    t = time.perf_counter()",
-        "    for _ in range(200): torch.matmul(x, w)",
-        "    torch.cuda.synchronize()",
-        "    ms = (time.perf_counter()-t)/200*1e3",
-        "    print(f'{label}: {ms:.2f} ms/iter')",
-        "",
-        "bench(torch.float16,       'FP16')",
-        "bench(torch.float8_e4m3fn, 'FP8 ')",
-    ]
-    hl = [
-        ("FP8 gives you ", False),
-        ("2× throughput.", True),
-        (" Here's why it works.", False),
-    ]
-    bullets = [
-        "→ smaller dtype = more values",
-        "   fit in a register",
-        "→ FP16: 2.41 ms/iter",
-        "→ FP8 : 1.19 ms/iter  (2×)",
-        "→ same accuracy w/ loss scaling",
-        "→ it's a load instruction change",
-    ]
-    frames = make_frames(ide, code, [], hl, bullets)
-    save_gif(frames, f"{OUT}/post3.gif")
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-#  POST 4 — Profiler / FlashAttention insight
-# ══════════════════════════════════════════════════════════════════════════════
-def post4():
-    ide = dict(
-        filename="05_flash_attention.cu",
-        project="cuda-kernels-from-scratch",
-        branch="main", lang="CUDA", cols=256,
-        file_tree=[
-            (0, "cuda-kernels-from-scratch", True,  False),
-            (1, "src",                       True,  False),
-            (2, "01_vector_add.cu",          False, False),
-            (2, "02_matmul_naive.cu",        False, False),
-            (2, "03_gemm_tiled.cu",          False, False),
-            (2, "04_softmax.cu",             False, False),
-            (2, "05_flash_attention.cu",     False, True ),
-            (1, "bench",                     True,  False),
-            (2, "bench.py",                  False, False),
-            (0, "Makefile",                  False, False),
-        ],
-        outline=[
-            (0, "__global__ flash_fwd",   True),
-            (1, "↳ load Q block → smem",  False),
-            (1, "↳ for K,V blocks ...",   False),
-            (1, "↳ online softmax",       False),
-            (1, "↳ accumulate output",    False),
-            (0, "host_launcher()",        True),
-        ],
-    )
-    code = [
-        "// Flash Attention — O(N) HBM reads instead of O(N²)",
-        "#define BLK 64",
-        "",
-        "__global__ void flash_fwd(",
-        "    float* Q, float* K, float* V,",
-        "    float* O, int N, int d) {",
-        "  __shared__ float Qs[BLK][64];",
-        "  __shared__ float Ks[BLK][64];",
-        "  __shared__ float Vs[BLK][64];",
-        "  float m = -1e9f, l = 0.f;",
-        "  float acc[64] = {0};",
-        "  // iterate K,V blocks — never store N×N",
-        "  for (int j = 0; j < N/BLK; j++) {",
-        "    load_tile(K, Ks, j, N, d);",
-        "    load_tile(V, Vs, j, N, d);",
-        "    online_softmax_update(Qs, Ks, Vs,",
-        "                         acc, m, l, d);",
-        "    __syncthreads();",
-        "  }",
-        "  write_output(O, acc, l);",
-        "}",
-    ]
-    hl = [
-        ("Read the ", False),
-        ("FlashAttention paper", True),
-        (" and actually understand it.", False),
-    ]
-    bullets = [
-        "→ naive attn: O(N²) HBM reads",
-        "→ flash attn: O(N)  HBM reads",
-        "→ -88% memory bandwidth",
-        "→ SM util: 31% → 84%",
-        "→ you only see this after",
-        "   writing a kernel yourself",
-    ]
-    frames = make_frames(ide, code, [], hl, bullets)
-    save_gif(frames, f"{OUT}/post4.gif")
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-#  POST 5 — Starter project call to action
-# ══════════════════════════════════════════════════════════════════════════════
-def post5():
-    ide = dict(
-        filename="why_kernels_matter.md",
-        project="cuda-kernels-from-scratch",
-        branch="main", lang="Markdown", cols=180,
-        file_tree=[
-            (0, "cuda-kernels-from-scratch", True,  False),
-            (1, "src",                       True,  False),
-            (2, "01_vector_add.cu",          False, False),
-            (2, "02_matmul_naive.cu",        False, False),
-            (2, "03_gemm_tiled.cu",          False, False),
-            (2, "04_softmax.cu",             False, False),
-            (2, "05_flash_attention.cu",     False, False),
-            (1, "notes",                     True,  False),
-            (2, "why_kernels_matter.md",     False, True ),
-            (0, "README.md",                 False, False),
-        ],
-        outline=[
-            (0, "# The Weekend Kernel",      True),
-            (1, "## What to build",          False),
-            (1, "## What you'll learn",      False),
-            (1, "## Resources",              False),
-        ],
-    )
-    code = [
-        "# The Weekend Kernel",
-        "",
-        "## What to build",
-        "GEMM with shared-memory tiling (~200 lines).",
-        "",
-        "## What you'll learn",
-        "- Why memory access patterns matter more",
-        "  than model size",
-        "- Why batch size is the first perf knob",
-        "- Why FP8 is a load instruction change",
-        "- Why fused kernels exist",
-        "- How to read a profiler trace",
-        "",
-        "## Resources",
-        "- CUDA Programming Guide ch.5 (memory model)",
-        "- Simon Boehm — How to Optimize a CUDA Matmul",
-        "- Tri Dao — FlashAttention repo (read the CUDA)",
-        "",
-        "Have you written a CUDA kernel?",
-        "Drop your story below. ↓",
-    ]
-    hl = [
-        ("Have you written a ", False),
-        ("CUDA kernel?", True),
-        (" What did it teach you?", False),
-    ]
-    bullets = [
-        "→ starter: GEMM with tiling",
-        "→ ~200 lines of real CUDA C",
-        "→ compare against cuBLAS",
-        "→ read the Nsight profile",
-        "→ drop your story below ↓",
-    ]
-    frames = make_frames(ide, code, [], hl, bullets)
-    save_gif(frames, f"{OUT}/post5.gif")
-
-
 if __name__ == "__main__":
-    print("Generating GIFs …")
-    post1()
-    post2()
-    post3()
-    post4()
-    post5()
+    for theme_key, out_name in [
+        ("tokyo",   "post1.gif"),
+        ("dracula", "post2.gif"),
+        ("github",  "post3.gif"),
+    ]:
+        T = THEMES[theme_key]
+        print(f"\n── {T['name']} ──")
+        frames = build_gif(
+            T, "03_gemm_tiled.cu", FILE_TREE, CODE, OUTLINE,
+            HEADLINE, BULLETS,
+            END_HEADLINE, END_BULLETS,
+        )
+        save_gif(frames, f"{OUT}/{out_name}")
+
     print("\nDone!")
