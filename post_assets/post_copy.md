@@ -3,9 +3,11 @@
 ---
 
 ## Post 01 — CUDA GEMM Kernel
-**GIF:** `post01.gif` — CUDA tiled GEMM kernel in Tokyo Night IDE
+**GIF:** `post01.gif`
 
 ---
+
+Writing 200 lines of CUDA changed how I think about every GPU problem I've had since.
 
 Every AI engineer should learn to write exactly one CUDA kernel.
 
@@ -33,9 +35,11 @@ Have you written a CUDA kernel? What did it teach you?
 ---
 
 ## Post 02 — LLM Batched Inference
-**GIF:** `post02.gif` — LLM inference engine batching logic
+**GIF:** `post02.gif`
 
 ---
+
+I watched a team spend 3 months optimizing their LLM — when the real problem was how they were sending requests to it.
 
 Batching is the most underrated skill in LLM inference.
 
@@ -66,9 +70,11 @@ What's the biggest inference bottleneck you've hit?
 ---
 
 ## Post 03 — RAG Pipeline
-**GIF:** `post03.gif` — Production RAG retrieval pipeline
+**GIF:** `post03.gif`
 
 ---
+
+Your RAG pipeline is probably broken — and the LLM is the last place to look.
 
 Most RAG pipelines fail at retrieval, not generation.
 
@@ -97,9 +103,11 @@ What's the retrieval improvement that moved the needle most for you?
 ---
 
 ## Post 04 — LangGraph Agentic AI
-**GIF:** `post04.gif` — LangGraph multi-step research agent
+**GIF:** `post04.gif`
 
 ---
+
+I used to build agents with prompt chains. Then I tried to debug one in production. Never again.
 
 LangGraph changed how I build Agentic AI systems.
 
@@ -130,9 +138,11 @@ What agentic pattern broke your brain first?
 ---
 
 ## Post 05 — Kafka Streaming ML
-**GIF:** `post05.gif` — Kafka real-time feature producer for ML
+**GIF:** `post05.gif`
 
 ---
+
+Your model is only as good as the features you feed it — and batch features are always lying to you a little.
 
 Real-time AI needs real-time features. Kafka is how.
 
@@ -164,14 +174,13 @@ What's the freshness SLA on your features today?
 ---
 
 ## Post 06 — AWS AI Factory
-**GIF:** `post06.gif` — AWS AI Factory orchestration pipeline
+**GIF:** `post06.gif`
 
 ---
 
-An AI Factory isn't a model. It's an operating system.
+The companies winning with AI right now aren't the ones with the best models. They're the ones with the best systems around models.
 
-The companies winning with AI aren't the ones with the best models.
-They're the ones with the best pipelines around models.
+An AI Factory isn't a model. It's an operating system.
 
 What an AI Factory actually looks like:
 
@@ -197,9 +206,11 @@ What does your AI Factory look like today?
 ---
 
 ## Post 07 — PyTorch Distributed Training (DDP)
-**GIF:** `post07.gif` — PyTorch DDP multi-GPU training loop
+**GIF:** `post07.gif`
 
 ---
+
+"I have 8 GPUs, this will be 8x faster." — me, before I understood distributed training.
 
 Distributed training will surprise you. Not in a good way.
 
@@ -228,9 +239,11 @@ What's the scaling inefficiency that surprised you most?
 ---
 
 ## Post 08 — NVIDIA Nemotron Fine-tuning
-**GIF:** `post08.gif` — Nemotron domain fine-tuning with LoRA/PEFT
+**GIF:** `post08.gif`
 
 ---
+
+I fine-tuned a smaller Nemotron model and it outperformed a much larger general model on our domain. The difference wasn't the architecture. It was the data.
 
 NVIDIA Nemotron changed what I thought was possible with fine-tuning.
 
@@ -257,9 +270,11 @@ What's the fine-tuning result that changed your assumptions?
 ---
 
 ## Post 09 — GPU Memory Bandwidth
-**GIF:** `post09.gif` — GPU memory bandwidth benchmark in CUDA
+**GIF:** `post09.gif`
 
 ---
+
+The profiler said 87% compute utilization. The model was still slow. Here's why that number was lying.
 
 Your GPU isn't compute-bound. It's memory-bound.
 
@@ -267,7 +282,7 @@ Almost everyone learns this the hard way.
 
 The numbers that change how you think:
 
-A100 peak compute:  312 TFLOPS
+A100 peak compute:     312 TFLOPS
 A100 memory bandwidth: 2 TB/s
 
 At FP16, feeding the compute at full speed requires
@@ -291,9 +306,11 @@ Have you run a roofline analysis on your model?
 ---
 
 ## Post 10 — Flash Attention
-**GIF:** `post10.gif` — Flash Attention forward kernel in CUDA
+**GIF:** `post10.gif`
 
 ---
+
+Context windows went from 2K to 100K tokens. Not because of bigger GPUs — because someone rewrote the attention algorithm.
 
 Flash Attention is the best algorithm most engineers never read.
 
@@ -313,9 +330,6 @@ How it works:
 → Uses the online softmax trick to avoid materializing the full N×N matrix
 → Result: 2-4x faster attention, 10x less memory, exact same output
 
-This is why context windows could scale from 2K to 100K+ tokens.
-Not bigger GPUs. A better algorithm.
-
 Read the kernel, not just the paper.
 
 #CUDA #FlashAttention #LLM #GPU #MLEngineering
@@ -323,9 +337,11 @@ Read the kernel, not just the paper.
 ---
 
 ## Post 11 — Multi-Agent Orchestration
-**GIF:** `post11.gif` — Multi-agent orchestration system
+**GIF:** `post11.gif`
 
 ---
+
+Three agents at 95% reliability each gives you an 86% reliable system. That math hits different when it's your production pipeline.
 
 Multi-agent AI systems break in ways single agents don't.
 
@@ -354,9 +370,11 @@ What's the multi-agent failure mode that surprised you?
 ---
 
 ## Post 12 — Production AI Mistakes
-**GIF:** `post12.gif` — Production AI serving and monitoring
+**GIF:** `post12.gif`
 
 ---
+
+We launched an AI feature with 94% eval accuracy. It failed in production within a week. Here's what we missed.
 
 3 mistakes every team makes deploying AI to production.
 
@@ -386,9 +404,11 @@ What's the production AI lesson you learned the hard way?
 ---
 
 ## Post 13 — AI Infrastructure
-**GIF:** `post13.gif` — GPU cluster and AI infrastructure orchestration
+**GIF:** `post13.gif`
 
 ---
+
+The org that built great AI infrastructure in 2022 is running 3x more experiments than its competitors today. Not better ideas. Better infrastructure.
 
 AI Infrastructure is the competitive moat. Not the model.
 
@@ -402,10 +422,6 @@ What most teams underestimate:
 → Network topology matters more than individual node specs at scale
 → The cluster that trains fast is different from the cluster that serves fast
 
-The org that built great infrastructure in 2022
-is running experiments 3x faster than competitors in 2025.
-Not because they have better ideas. Because they have better infrastructure.
-
 GPT-4 didn't win because of the architecture.
 It won because of the system around the architecture.
 
@@ -416,9 +432,11 @@ What infrastructure investment paid off most for your team?
 ---
 
 ## Post 14 — Forward Deployed AI
-**GIF:** `post14.gif` — Forward deployed AI integration engineering
+**GIF:** `post14.gif`
 
 ---
+
+The best AI I've ever shipped wasn't the most accurate model. It was the one that fit so naturally into the workflow that people forgot it wasn't always there.
 
 Forward Deployed AI engineering is the hardest job in tech.
 
@@ -450,9 +468,11 @@ What's the hardest part of forward deploying AI at your org?
 ---
 
 ## Post 15 — AI Patents
-**GIF:** `post15.gif` — AI patent research and invention logging
+**GIF:** `post15.gif`
 
 ---
+
+Filing an AI patent taught me more about what's actually novel in this space than any paper I've read.
 
 The AI engineers who will matter most are the ones who invent.
 
@@ -470,8 +490,6 @@ What filing AI patents taught me:
 The uncomfortable truth:
 Most engineers implement. Fewer engineers design.
 Fewer still identify what's genuinely new and worth protecting.
-
-The ones who do are the ones who compound.
 
 The AI space moves fast.
 The people who shape it are the ones who see what doesn't exist yet
