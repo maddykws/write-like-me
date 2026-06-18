@@ -229,20 +229,19 @@ def overlay_frame(base_img, p):
 def build_gif(p):
     frames=[]
     sf=split_frame(p)
-    for _ in range(20): frames.append((sf,100))
+    for _ in range(8): frames.append((sf,100))   # 0.8s split view
     typed=[]
     for li,line in enumerate(p["code"]):
         typed.append("")
         for ci,ch in enumerate(line):
             typed[-1]+=ch
-            if ci%2==0: frames.append((full_frame(p,list(typed),li),42))
-        for _ in range(4): frames.append((full_frame(p,list(typed),li),70))
+            if ci%3==0: frames.append((full_frame(p,list(typed),li),30))
+        for _ in range(2): frames.append((full_frame(p,list(typed),li),60))
     last=list(typed); ll=len(p["code"])-1
-    for _ in range(4):
-        frames.append((full_frame(p,last,ll),400))
-        frames.append((full_frame(p,last,-1),400))
+    frames.append((full_frame(p,last,ll),300))
+    frames.append((full_frame(p,last,-1),300))
     base=full_frame(p,last,ll); ov=overlay_frame(base,p)
-    for _ in range(40): frames.append((ov,100))
+    for _ in range(20): frames.append((ov,100))   # 2s overlay
     return frames
 
 def save(frames, path, colors=96):
@@ -981,26 +980,25 @@ POSTS = [
 def build_gif(p):
     frames = []
     sf = split_frame(p)
-    for _ in range(20): frames.append((sf, 100))
+    for _ in range(8): frames.append((sf, 100))   # 0.8s split view
 
     typed = []
     for li, line in enumerate(p["code"]):
         typed.append("")
         for ci, ch in enumerate(line):
             typed[-1] += ch
-            if ci % 2 == 0:
-                frames.append((full_frame(p, list(typed), li), 42))
-        for _ in range(4):
-            frames.append((full_frame(p, list(typed), li), 70))
+            if ci % 3 == 0:
+                frames.append((full_frame(p, list(typed), li), 30))
+        for _ in range(2):
+            frames.append((full_frame(p, list(typed), li), 60))
 
     last = list(typed); ll = len(p["code"]) - 1
-    for _ in range(4):
-        frames.append((full_frame(p, last, ll), 400))
-        frames.append((full_frame(p, last, -1), 400))
+    frames.append((full_frame(p, last, ll), 300))
+    frames.append((full_frame(p, last, -1), 300))
 
     base = full_frame(p, last, ll)
     ov   = overlay_frame(base, p)
-    for _ in range(40): frames.append((ov, 100))
+    for _ in range(20): frames.append((ov, 100))   # 2s overlay
     return frames
 
 def save(frames, path, colors=96):
